@@ -14,25 +14,24 @@ int output_dnum(int x,int digit) {
     int temp = 0, digit2 = 0;
     int flag = (x >= 0 ? 0 : (x = -x, 1));
     if (flag) {
-         putchar('-');
+         putchar('-'); //负数
      } 
-    do {
-     //temp = ((temp << 3) + (temp << 1)) + x % 10;
-        temp = temp * 10 + x % 10;
+    do {                         
+        temp = temp * 10 + x % 10;  //等同于temp = ((temp << 3) + (temp << 1)) + x % 10;
         digit2 += 1;
         x /= 10;
-     }while(x);
+     } while(x);
         if(digit != -1) digit2 = digit;
         while (digit2--) {
         putchar(temp % 10 ^ 48);
-        digit += 1;
+        digit += 1; //计算数字位数
         temp /= 10;
     }
     return digit;
 }
 
 int output_d(int x) {
-    #define BASE 100000
+    #define BASE 100000 //端口地址定义BASE
     #define BASE_D 5
     int ret = 0;
     unsigned int temp = (x >= 0 ? x : -x);
@@ -45,7 +44,7 @@ int output_d(int x) {
         if (p2 < 0) p2 = -p2;
         output_dnum(p2, BASE_D);
     }
-    #undef BASE
+    #undef BASE  //取消BASE的定义
     return ret;
 }
 
@@ -56,7 +55,7 @@ int my_printf(const char *str, ...) {
     int ret = 0;
     while (str[0]) {
         switch (str[0]) {
-            case '%':{
+            case '%':{ 
                 str++;
                 switch (str[0]) {
                     case 'd' : {               
@@ -72,19 +71,19 @@ int my_printf(const char *str, ...) {
     return ret;
 }
 int main() {
-    my_printf("hello world : %d\n", -5 );
+    my_printf("hello world : %d\n", -5 ); //负数
     printf("hello world : %d\n", -5);
-    my_printf("hello world : %d\n", 10000);
+    my_printf("hello world : %d\n", 100000);  //后面是0的
     printf("hello world : %d\n", 100000);
-    my_printf("hello world : %d\n", 1999999999 );
+    my_printf("hello world : %d\n", 1999999999 );  //大数
     printf("hello world : %d\n", 1999999999);
-    my_printf("hello world : %d\n", 0);
+    my_printf("hello world : %d\n", 0);  //数为0时
     printf("hello world : %d\n", 0);
-    my_printf("hello world : %d\n", INT32_MIN);
+    my_printf("hello world : %d\n", INT32_MIN);  //输出最小数
     printf("hello world : %d\n", INT32_MIN);
     int n;
-    scanf("%d", &n);
-    my_printf("has %d digits\n", my_printf("%d", n));
+    scanf("%d", &n); 
+    my_printf("has %d digits\n", my_printf("%d", n));  //计算位数
     printf("has %d digits\n", printf("%d", n));
     return 0;
 }
