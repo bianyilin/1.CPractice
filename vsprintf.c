@@ -18,19 +18,19 @@ unsigned long simple_strtoul(const char *cp,char **endp,unsigned int base)
 {
 	unsigned long result = 0,value;
 
-	if (!base) {//bash为０，不进行操作
+	if (!base) {        //bash为０不向下进行
 		base = 10;
 		if (*cp == '0') {
 			base = 8;
 			cp++;
-			if ((*cp == 'x') && isxdigit(cp[1])) {//判断是否为１６进制
+			if ((*cp == 'x') && isxdigit(cp[1])){      //判断是否为１６进制数
 				cp++;
 				base = 16;
 			}
 		}
 	}
 	while (isxdigit(*cp) && (value = isdigit(*cp) ? *cp-'0' : (islower(*cp)
-	    ? toupper(*cp) : *cp)-'A'+10) < base) {//转换为大写
+	    ? toupper(*cp) : *cp)-'A'+10) < base) {   //将小写字母转换为大写字母
 		result = result*base + value;
 		cp++;
 	}
@@ -40,7 +40,7 @@ unsigned long simple_strtoul(const char *cp,char **endp,unsigned int base)
 }
 
 /* we use this so that we can do without the ctype library */
-#define is_digit(c)	((c) >= '0' && (c) <= '9')//判断是不是数字
+#define is_digit(c)	((c) >= '0' && (c) <= '9')   //判断是不是数字
 
 static int skip_atoi(const char **s)
 {
@@ -62,7 +62,7 @@ static int skip_atoi(const char **s)
 #define do_div(n,base) ({ \
 int __res; \
 __asm__("divl %4":"=a" (n),"=d" (__res):"0" (n),"1" (0),"r" (base)); \
-__res; })
+__res; })  //将指定数字转换成不同格式的数字字符串
 
 static char * number(char * str, int num, int base, int size, int precision
 	,int type)
@@ -70,12 +70,12 @@ static char * number(char * str, int num, int base, int size, int precision
 	char c,sign,tmp[36];
 	const char *digits="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	int i;
-
+        //将大写字母转换成小写
 	if (type&SMALL) digits="0123456789abcdefghijklmnopqrstuvwxyz";
 	if (type&LEFT) type &= ~ZEROPAD;
 	if (base<2 || base>36)
 		return 0;
-	c = (type & ZEROPAD) ? '0' : ' ' ;
+	c = (type & ZEROPAD) ? '0' : ' ' ;  //如果有ZEROPAD则用0填充，否在用空格
 	if (type&SIGN && num<0) {
 		sign='-';
 		num = -num;
@@ -86,15 +86,16 @@ static char * number(char * str, int num, int base, int size, int precision
 		if (base==16) size -= 2;
 		else if (base==8) size--;
 	i=0;
+	//将数值部分转化成字符串存入tmp中
 	if (num==0)
 		tmp[i++]='0';
 	else while (num!=0)
-		tmp[i++]=digits[do_div(num,base)];
+		tmp[i++]=digits[do_div(num,base)];//重新设置精度
 	if (i>precision) precision=i;
 	size -= precision;
 	if (!(type&(ZEROPAD+LEFT)))
 		while(size-->0)
-			*str++ = ' ';
+			*str++ = ' ';  //设置符号位
 	if (sign)
 		*str++ = sign;
 	if (type&SPECIAL)
@@ -106,13 +107,13 @@ static char * number(char * str, int num, int base, int size, int precision
 		}
 	if (!(type&LEFT))
 		while(size-->0)
-			*str++ = c;
+			*str++ = c;  //用0填充
 	while(i<precision--)
-		*str++ = '0';
+		*str++ = '0';  //数字
 	while(i-->0)
 		*str++ = tmp[i];
 	while(size-->0)
-		*str++ = ' ';
+		*str++ = ' ';  //空格填剩下部分
 	return str;
 }
 
@@ -131,8 +132,8 @@ int vsprintf(char *buf, const char *fmt, va_list args)
 				   number of chars for from string */
 	int qualifier;		/* 'h', 'l', or 'L' for integer fields */
 
-	for (str=buf ; *fmt ; ++fmt) {//fmt的位置每次向后移动一次并取值，到fmt为\0为止
-		if (*fmt != '%') {//如果不是％，跳过这次循环
+	for (str=buf ; *fmt ; ++fmt) {   //fmt的位置每次向后移动一次并取值，到fmt为\0为止
+		if (*fmt != '%') {   //如果不是％，跳过这次循环
 			*str++ = *fmt;
 			continue;
 		}
@@ -151,11 +152,11 @@ int vsprintf(char *buf, const char *fmt, va_list args)
 		
 		/* get field width */
 		field_width = -1;
-		if (is_digit(*fmt))//如果当前字符是数字
+		if (is_digit(*fmt))   //判断当前字符是否为数字
 			field_width = skip_atoi(&fmt);
-		else if (*fmt == '*') {//如果是当前字符是*
+		else if (*fmt == '*') {    //判断当前字符是否为*
 			/* it's the next argument */
-			field_width = va_arg(args, int);//field_width取下一个参数的int类型的值
+			field_width = va_arg(args, int);   //field_width取下一个参数的int类型的值
 			if (field_width < 0) {
 				field_width = -field_width;
 				flags |= LEFT;
@@ -165,7 +166,7 @@ int vsprintf(char *buf, const char *fmt, va_list args)
 		/* get the precision */
 		precision = -1;
 		if (*fmt == '.') {
-			++fmt;	//如果fmt是点，向后移动一位
+			++fmt;	//如果fmt是'.'，向后移动一位
 			if (is_digit(*fmt))//判断是不是数字字符
 				precision = skip_atoi(&fmt);
 			else if (*fmt == '*') {
@@ -183,8 +184,8 @@ int vsprintf(char *buf, const char *fmt, va_list args)
 			++fmt;
 		}
 
-		switch (*fmt) {//判断类型
-		case 'c'://字符型
+		switch (*fmt) {  //判断类型
+		case 'c':  字符
 			if (!(flags & LEFT))
 				while (--field_width > 0)
 					*str++ = ' ';
@@ -193,7 +194,7 @@ int vsprintf(char *buf, const char *fmt, va_list args)
 				*str++ = ' ';
 			break;
 
-		case 's'://字符串型
+		case 's':  //字符串
 			s = va_arg(args, char *);
 			if (!s)
 				s = "<NULL>";
@@ -211,15 +212,15 @@ int vsprintf(char *buf, const char *fmt, va_list args)
 			while (len < field_width--)
 				*str++ = ' ';
 			break;
-
-		case 'o'://八进制型
+                       //八进制数
+		case 'o':
 			str = number(str, va_arg(args, unsigned long), 8,
 				field_width, precision, flags);
 			break;
-
-		case 'p'://指针型
+                       //指针型
+		case 'p':
 			if (field_width == -1) {
-				field_width = 8;
+				field_width = 8;  //宽为8
 				flags |= ZEROPAD;
 			}
 			str = number(str,
@@ -227,17 +228,18 @@ int vsprintf(char *buf, const char *fmt, va_list args)
 				field_width, precision, flags);
 			break;
 
-		case 'x'://十六进制型
+		case 'x'://小写十六进制型
 			flags |= SMALL;
 		case 'X'://大写十六进制
 			str = number(str, va_arg(args, unsigned long), 16,
 				field_width, precision, flags);
 			break;
-
-		case 'd'://十进制型
+               //整型
+		case 'd':
+		//带符号
 		case 'i':
 			flags |= SIGN;
-		case 'u'://无符号整形
+		case 'u'://无符号
 			str = number(str, va_arg(args, unsigned long), 10,
 				field_width, precision, flags);
 			break;
@@ -263,12 +265,12 @@ int vsprintf(char *buf, const char *fmt, va_list args)
 
 int sprintf(char * buf, const char *fmt, ...)
 {
-	va_list args;//初始化列表指针
+	va_list args;  //初始化列表指针
 	int i;
 
 	va_start(args, fmt);
-	i=vsprintf(buf,fmt,args);//格式化输出到buf指向的字符串并接受个数
+	i=vsprintf(buf,fmt,args);  //格式化输出到buf指向的字符串并接受个数
 	va_end(args);
-	return i;//返回格式化输出的字符个数
+	return i;  //返回格式化输出的字符个数
 }
 
