@@ -4,7 +4,7 @@ mZ> Author: liuyan
 	> Mail:1989992012@qq.com
 	> Created Time: 2019年05月31日 星期五 19时54分54秒
  ************************************************************************/
-
+//check服务端
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sys/types.h>
