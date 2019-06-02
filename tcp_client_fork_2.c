@@ -4,7 +4,7 @@
 	> Mail: 
 	> Created Time: Sat 23 Feb 2019 14:26:47 CST
  ************************************************************************/
-
+//聊天室客户端
 #include "common.h"
 
 char *config="./chat_c.conf";
