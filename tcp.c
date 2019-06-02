@@ -4,7 +4,7 @@
 	> Mail: 
 	> Created Time: 2019年04月13日 星期六 14时12分59秒
  ************************************************************************/
-
+//check客户端
 #include<stdio.h>
 #include <sys/socket.h>
 #include <sys/types.h>
